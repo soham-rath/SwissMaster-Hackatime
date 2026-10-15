@@ -3,9 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>SwissMaster - Chess Tournament Manager</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <header>
+        <h1>SwissMaster</h1>
+        <div>
+            <button>
+                Tournaments
+            </button>
+        </div>
+    </header>
+
+    <!-- Setup -->
+    <div id="app">
+        <main>
+            <section id="setup" class="view active">
+                <div class="setup-grid">
+                    <div class="card setup-card">
+
+                        <h2>Tournament settings</h2>
+
+                        <div class="settings-grid">
+                            <div class="section-title">General</div>
+
+                            <div class="form-group full-width">
+                                <label for="tournament-name">Tournament Name</label>
+                                <input type="text" id="tournament-name" placeholder="Name des Turniers">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>Tournament Mode</label>
+                                <div class="option-group" role="radiogroup">
+                                    <label class="option-pill">
+                                        <input type="radio" name="tournament-mode" value="TEAM" checked>
+                                        <span>Team Tournament</span>
+                                    </label>
+                                    <label class="option-pill">
+                                        <input type="radio" name="tournament-mode" value="TEAM" checked>
+                                        <span>Single Tournament</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="section-title">Format</div>
+
+                            <div class="form-group">
+                                <label for="pairing-system">System</label>
+                                <select id="pairing-system">
+                                    <option value="Swiss">Swiss System</option>
+                                    <!-- Add more Systems-->
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Number of Rounds</label>
+                                <input type="number" id="total-rounds" min="1">
+                            </div>
+
+                            <div class="section-title">Rules</div>
+
+                            <div class="form-group" full-width>
+                                <select id="rules-preset">
+                                    <!--Add rule format (FIDE and stuff)-->
+                                </select>
+                            </div>     
+                            <!-- Maybe custom amount of points for win and loss-->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
     
 </body>
 </html>
