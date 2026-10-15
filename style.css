@@ -49,3 +49,11 @@ button {
     border-radius: 6px;
     cursor: pointer;
 }
+
+.setup-page {
+    display: none;
+}
+
+.setup-page.active {
+    display:block;
+}
