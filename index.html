@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,127 +6,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SwissMaster - Chess Tournament Manager</title>
     <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
 </head>
 <body>
     <header>
         <h1>SwissMaster</h1>
-        <div class="nav-links">
-            <button class="nav-btn" data-target="nav-setup">
-                Setup
-            </button>
-            <button class="nav-btn" data-target="nav-pairings">
-                Pairings
-            </button>
-            <button class="nav-btn" data-target="nav-results">
-                Results
-            </button>
-        </div>
+        <p>Chess Tournament Manager</p>
     </header>
 
-    <div id="app">
-        <main>
-            <!-- Setup -->
-            <section id="setup" class="view active">
-                <div class="setup-steps">
-                    <div class="setup-step active" id="step-indicator-1">
-                        <span>1</span>
-                        <p>Tournament settings</p>
-                    </div>
-                    <div class="setup-step" id="step-indicator-2">
-                        <span>2</span>
-                        <p>Participants/Teams</p>
-                    </div>
+    <main>
+        <section id="setup" class="view">
+
+            <!-- Setup progress -->
+            <div class="setup-steps">
+                <div class="setup-step active" id="step-indicator-1">
+                    <span>1</span>
+                    <p>Tournament settings</p>
                 </div>
-                <div id="setup-step-1" class="setup-page active">
-                    <div class="setup-grid">
-                        <div class="card setup-card">
 
-                            <h2>Tournament settings</h2>
+                <div class="setup-step" id="step-indicator-2">
+                    <span>2</span>
+                    <p>Participants/Teams</p>
+                </div>
+            </div>
 
-                            <div class="settings-grid">
-                                <div class="section-title">General</div>
+            <!-- Step 1: Tournament settings -->
+            <div id="setup-step-1" class="setup-page active">
+                <div class="card setup-card">
+                    <h2>Tournament Settings</h2>
 
-                                <div class="form-group full-width">
-                                    <label for="tournament-name">Tournament Name</label>
-                                    <input type="text" id="tournament-name" placeholder="Tournament name">
-                                </div>
+                    <div class="settings-grid">
+                        <h3 class="section-title">General</h3>
 
-                                <div class="form-group full-width">
-                                    <label>Tournament Mode</label>
-                                    <div class="option-group" role="radiogroup">
-                                        <label class="option-pill">
-                                            <input type="radio" name="tournament-mode" value="TEAM" checked>
-                                            <span>Team Tournament</span>
-                                        </label>
-                                        <label class="option-pill">
-                                            <input type="radio" name="tournament-mode" value="SINGLES">
-                                            <span>Single Tournament</span>
-                                        </label>
-                                    </div>
-                                </div>
+                        <div class="form-group full-width">
+                            <label for="tournament-name">Tournament Name</label>
+                            <input
+                                type="text"
+                                id="tournament-name"
+                                placeholder="Enter tournament name"
+                                required
+                            >
+                        </div>
 
-                                <div class="section-title">Format</div>
+                        <div class="form-group full-width">
+                            <label>Tournament Mode</label>
 
-                                <div class="form-group">
-                                    <label for="pairing-system">System</label>
-                                    <select id="pairing-system">
-                                        <option value="SWISS">Swiss System</option>
-                                        <option value="ROUND_ROBIN">Round Robbin</option>
-                                        <!-- Add more Systems-->
-                                    </select>
-                                </div>
+                            <div class="option-group">
+                                <label class="option-pill">
+                                    <input
+                                        type="radio"
+                                        name="tournament-mode"
+                                        value="TEAM"
+                                        checked
+                                    >
+                                    <span>Team Tournament</span>
+                                </label>
 
-                                <div class="form-group">
-                                    <label>Number of Boards</label>
-                                    <input type="number" id="boards-count" min="1">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Number of Rounds</label>
-                                    <input type="number" id="total-rounds" min="1">
-                                </div>
-
-                                <div class="section-title">Rules</div>
-
-                                <div class="form-group full-width">
-                                    <select id="rules-preset">
-                                        <!--Add rule format (FIDE and stuff)-->
-                                    </select>
-                                </div>     
-                                <!-- Maybe custom amount of points for win and loss-->
+                                <label class="option-pill">
+                                    <input
+                                        type="radio"
+                                        name="tournament-mode"
+                                        value="SINGLES"
+                                    >
+                                    <span>Individual Tournament</span>
+                                </label>
                             </div>
                         </div>
+
+                        <h3 class="section-title">Format</h3>
+
+                        <div class="form-group">
+                            <label for="pairing-system">Pairing System</label>
+                            <select id="pairing-system">
+                                <option value="SWISS">Swiss System</option>
+                                <option value="ROUND_ROBIN">Round Robin</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="boards-count">Boards per Match</label>
+                            <input
+                                type="number"
+                                id="boards-count"
+                                min="1"
+                                value="4"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="total-rounds">Number of Rounds</label>
+                            <input
+                                type="number"
+                                id="total-rounds"
+                                min="1"
+                                value="5"
+                                required
+                            >
+                        </div>
+
+                        <h3 class="section-title">Rules</h3>
+
+                        <div class="form-group full-width">
+                            <label for="rules-preset">Rules Preset</label>
+                            <select id="rules-preset">
+                                <option value="FIDE">FIDE Rules</option>
+                                <option value="CASUAL">Casual Rules</option>
+                                <option value="CUSTOM">Custom Rules</option>
+                            </select>
+                        </div>
                     </div>
+                </div>
+
+                <div class="setup-navigation">
+                    <button type="button" id="next-to-participants">
+                        Next: Participants →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Participants and teams -->
+            <div id="setup-step-2" class="setup-page">
+                <div class="card setup-card">
+                    <h2>Participants / Teams</h2>
+
+                    <p class="description" id="participant-description">
+                        Add the teams that will participate in your tournament.
+                    </p>
+
+                    <form id="participant-form">
+                        <div class="form-group">
+                            <label for="participant-name" id="participant-label">
+                                Team Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="participant-name"
+                                placeholder="Enter team name"
+                                autocomplete="off"
+                            >
+                        </div>
+
+                        <button type="submit" id="add-participant">
+                            + Add Team
+                        </button>
+                    </form>
+
+                    <div class="participant-list-section">
+                        <h3 id="participant-list-title">Teams (0)</h3>
+                        <ul id="participant-list"></ul>
+                        <p id="empty-message">No teams added yet.</p>
+                    </div>
+
                     <div class="setup-navigation">
-                        <button type="button" id="next-to-participants">
-                            Next: Participants →
+                        <button
+                            type="button"
+                            id="back-to-settings"
+                            class="secondary-button"
+                        >
+                            ← Back
+                        </button>
+
+                        <button type="button" id="finish-setup">
+                            Finish Setup
                         </button>
                     </div>
                 </div>
-                    <!-- Step 2 -->
-                <div id="setup-step-2" class="setup-page">
+            </div>
 
-                    <div class="card setup-card">
-                        <h2>Add participants</h2>
-
-                        <!-- Participants -->
-
-                        <div class="setup-navigation">
-                            <button type="button" id="back-to-settings">
-                                ← Back
-                            </button>
-
-                            <button type="button" id="finish-setup">
-                                Finish Setup
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <script src="app.js" defer></script>
+        </section>
+    </main>
 </body>
 </html>
