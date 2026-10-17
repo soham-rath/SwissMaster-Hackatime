@@ -1,9 +1,19 @@
 
+"use strict";
+
+const STORAGE_KEY = "swissmaster-tournament";
+
 const step1 = document.getElementById("setup-step-1");
 const step2 = document.getElementById("setup-step-2");
 
 const indicator1 = document.getElementById("step-indicator-1");
 const indicator2 = document.getElementById("step-indicator-2");
+
+const tournamentName = document.getElementById("tournament-name");
+const pairingSystem = document.getElementById("pairing-system");
+const boardsCount = document.getElementById("boards-count");
+const totalRounds = document.getElementById("total-rounds");
+const rulesPreset = document.getElementById("rules-preset");
 
 const modeInputs = document.querySelectorAll(
     'input[name="tournament-mode"]'
@@ -18,48 +28,212 @@ const participantListTitle = document.getElementById("participant-list-title");
 const emptyMessage = document.getElementById("empty-message");
 const description = document.getElementById("participant-description");
 
+const nextButton = document.getElementById("next-to-participants");
+const backButton = document.getElementById("back-to-settings");
+const finishButton = document.getElementById("finish-setup");
+
 let participants = [];
 
-function showSetupStep(step) {
-    const firstStep = step === 1;
-
-    step1.classList.toggle("active", firstStep);
-    step2.classList.toggle("active", !firstStep);
-
-    indicator1.classList.toggle("active", firstStep);
-    indicator2.classList.toggle("active", !firstStep);
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
+// Get tournament mode
 
 function getTournamentMode() {
     return document.querySelector(
         'input[name="tournament-mode"]:checked'
-    ).value;
+    )?.value ?? "TEAM";
 }
+
+// Get tournament data
+
+function getTournamentData() {
+    return {
+        name: tournamentName.value.trim(),
+        mode: getTournamentMode(),
+        pairingSystem: pairingSystem.value,
+        boards: Number(boardsCount.value),
+        rounds: Number(totalRounds.value),
+        rules: rulesPreset.value,
+        participants: [...participants]
+    };
+}
+
+// Save tournament draft
+
+function saveDraft() {
+    try {
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(getTournamentData())
+        );
+    } catch (error) {
+        console.error("Couldn't save tournament draft:", error);
+    }
+}
+
+// Load tournament draft
+
+function loadDraft() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if (!saved) return;
+
+        const data = JSON.parse(saved);
+
+        if (
+            !data ||
+            typeof data !== "object" ||
+            Array.isArray(data)
+        ) {
+            return;
+        }
+
+        tournamentName.value =
+            typeof data.name === "string" ? data.name : "";
+
+        if (["SWISS", "ROUND_ROBIN"].includes(data.pairingSystem)) {
+            pairingSystem.value = data.pairingSystem;
+        }
+
+        if (
+            Number.isInteger(data.boards) &&
+            data.boards >= 1
+        ) {
+            boardsCount.value = data.boards;
+        }
+
+        if (
+            Number.isInteger(data.rounds) &&
+            data.rounds >= 1
+        ) {
+            totalRounds.value = data.rounds;
+        }
+
+        if (["FIDE", "CASUAL", "CUSTOM"].includes(data.rules)) {
+            rulesPreset.value = data.rules;
+        }
+
+        const modeInput = document.querySelector(
+            `input[name="tournament-mode"][value="${data.mode}"]`
+        );
+
+        if (modeInput) {
+            modeInput.checked = true;
+        }
+
+        if (Array.isArray(data.participants)) {
+            participants = [
+                ...new Set(
+                    data.participants.filter(
+                        (item) =>
+                            typeof item === "string" &&
+                            item.trim().length > 0
+                    )
+                )
+            ];
+        }
+    } catch (error) {
+        console.error("Couldn't restore tournament draft:", error);
+    }
+}
+
+// Navigate between setup steps
+
+function showSetupStep(step) {
+    const showSettings = step === 1;
+
+    step1.classList.toggle("active", showSettings);
+    step2.classList.toggle("active", !showSettings);
+
+    indicator1.classList.toggle("active", showSettings);
+    indicator2.classList.toggle("active", !showSettings);
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+// Validate tournament settings
+
+function validateTournamentSettings() {
+    if (!tournamentName.value.trim()) {
+        alert("Please enter a tournament name.");
+        tournamentName.focus();
+        return false;
+    }
+
+    if (
+        !Number.isInteger(Number(boardsCount.value)) ||
+        Number(boardsCount.value) < 1
+    ) {
+        alert("Please enter a valid number of boards.");
+        boardsCount.focus();
+        return false;
+    }
+
+    if (
+        !Number.isInteger(Number(totalRounds.value)) ||
+        Number(totalRounds.value) < 1
+    ) {
+        alert("Please enter a valid number of rounds.");
+        totalRounds.focus();
+        return false;
+    }
+
+    return true;
+}
+
+nextButton.addEventListener("click", () => {
+    if (!validateTournamentSettings()) return;
+
+    saveDraft();
+    showSetupStep(2);
+});
+
+backButton.addEventListener("click", () => {
+    saveDraft();
+    showSetupStep(1);
+});
+
+// Update form labels based on tournament mode
 
 function updateParticipantMode() {
     const isTeam = getTournamentMode() === "TEAM";
 
-    participantLabel.textContent = isTeam ? "Team Name" : "Player Name";
-    participantName.placeholder = isTeam ? "Enter team name"
+    participantLabel.textContent = isTeam
+        ? "Team Name"
+        : "Player Name";
+
+    participantName.placeholder = isTeam
+        ? "Enter team name"
         : "Enter player name";
 
-    addButton.textContent = isTeam ? "+ Add Team" : "+ Add Player";
+    addButton.textContent = isTeam
+        ? "+ Add Team"
+        : "+ Add Player";
 
-    description.textContent = isTeam ? "Add the teams that will participate in your tournament."
+    description.textContent = isTeam
+        ? "Add the teams that will participate in your tournament."
         : "Add the players that will participate in your tournament.";
-
-    participantListTitle.textContent = isTeam ? `Teams (${participants.length})`
-        : `Players (${participants.length})`;
 
     renderParticipants();
 }
 
+// Listen for mode changes
+
+modeInputs.forEach((input) => {
+    input.addEventListener("change", () => {
+        updateParticipantMode();
+        saveDraft();
+    });
+});
+
+// Display participants
+
 function renderParticipants() {
     const isTeam = getTournamentMode() === "TEAM";
 
-    participantList.innerHTML = "";
+    participantList.replaceChildren();
 
     participants.forEach((participant, index) => {
         const item = document.createElement("li");
@@ -67,9 +241,11 @@ function renderParticipants() {
         const removeButton = document.createElement("button");
 
         name.textContent = participant;
+
         removeButton.textContent = "Remove";
         removeButton.className = "remove-participant";
         removeButton.type = "button";
+
         removeButton.setAttribute(
             "aria-label",
             `Remove ${participant}`
@@ -78,57 +254,23 @@ function renderParticipants() {
         removeButton.addEventListener("click", () => {
             participants.splice(index, 1);
             renderParticipants();
+            saveDraft();
         });
 
-        item.append(name, removeButton)
-            ;
+        item.append(name, removeButton);
         participantList.appendChild(item);
     });
 
-    participantListTitle.textContent = isTeam ? `Teams (${participants.length})`
-        : `Players (${participants.length})`;
+    participantListTitle.textContent =
+        `${isTeam ? "Teams" : "Players"} (${participants.length})`;
+
+    emptyMessage.textContent =
+        `No ${isTeam ? "teams" : "players"} added yet.`;
 
     emptyMessage.hidden = participants.length > 0;
 }
 
-document.getElementById("next-to-participants")
-    .addEventListener("click", () => {
-        const tournamentName = document.getElementById("tournament-name")
-            .value.trim();
-
-        const boards = Number(
-            document.getElementById("boards-count").value);
-
-        const rounds = Number(
-            document.getElementById("total-rounds").value);
-
-        if (!tournamentName) {
-            alert("Please enter a tournament name.");
-            document.getElementById("tournament-name").focus();
-            return;
-        }
-
-        if (!Number.isInteger(boards) || boards < 1) {
-            alert("Please enter at least one board.");
-            document.getElementById("boards-count").focus();
-            return;
-        }
-
-        if (!Number.isInteger(rounds) || rounds < 1) {
-            alert("Please enter at least one round.");
-            document.getElementById("total-rounds").focus();
-            return;
-        }
-
-        showSetupStep(2);
-    });
-
-document.getElementById("back-to-settings")
-    .addEventListener("click", () => showSetupStep(1));
-
-modeInputs.forEach((input) => {
-    input.addEventListener("change", updateParticipantMode);
-});
+// Add participants
 
 participantForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -142,7 +284,8 @@ participantForm.addEventListener("submit", (event) => {
 
     const duplicate = participants.some(
         (participant) =>
-            participant.toLowerCase() === name.toLowerCase()
+            participant.toLocaleLowerCase() ===
+            name.toLocaleLowerCase()
     );
 
     if (duplicate) {
@@ -153,35 +296,59 @@ participantForm.addEventListener("submit", (event) => {
 
     participants.push(name);
     participantName.value = "";
-    participantName.focus();
 
     renderParticipants();
+    saveDraft();
+
+    participantName.focus();
 });
 
-document.getElementById("finish-setup")
-    .addEventListener("click", () => {
-        if (participants.length === 0) {
-            alert("Please add at least one participant or team.");
-            participantName.focus();
-            return;
-        }
+// Finish setup
 
-        const tournament = {
-            name: document.getElementById("tournament-name").value.trim(),
-            mode: getTournamentMode(),
-            pairingSystem: document.getElementById("pairing-system").value,
-            boards: Number(document.getElementById("boards-count").value),
-            rounds: Number(document.getElementById("total-rounds").value),
-            rules: document.getElementById("rules-preset").value,
-            participants: [...participants]
-        };
+finishButton.addEventListener("click", () => {
+    if (!validateTournamentSettings()) {
+        showSetupStep(1);
+        return;
+    }
 
-        console.log("Tournament setup:", tournament);
+    if (participants.length === 0) {
+        alert("Please add at least one team or player.");
+        participantName.focus();
+        return;
+    }
 
-        alert(
-            `Setup completed for "${tournament.name}"!\n` +
-            `${participants.length} participant(s) added.`
-        );
-    });
+    const tournament = getTournamentData();
 
+    saveDraft();
+
+    console.log("Tournament setup completed:", tournament);
+
+    alert(
+        `Tournament "${tournament.name}" is ready!\n\n` +
+        `${participants.length} participant(s) added.\n` +
+        `System: ${tournament.pairingSystem === "SWISS"
+            ? "Swiss System"
+            : "Round Robin"
+        }\n` +
+        `Rounds: ${tournament.rounds}`
+    );
+});
+
+// Automatically save settings
+
+[
+    tournamentName,
+    pairingSystem,
+    boardsCount,
+    totalRounds,
+    rulesPreset
+].forEach((element) => {
+    element.addEventListener("input", saveDraft);
+    element.addEventListener("change", saveDraft);
+});
+
+// Initialize application
+
+loadDraft();
 updateParticipantMode();
+showSetupStep(1);
