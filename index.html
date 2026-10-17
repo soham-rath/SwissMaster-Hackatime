@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="app.js" defer></script>
 </head>
+
 <body>
     <header>
         <h1>SwissMaster</h1>
@@ -40,12 +41,7 @@
 
                         <div class="form-group full-width">
                             <label for="tournament-name">Tournament Name</label>
-                            <input
-                                type="text"
-                                id="tournament-name"
-                                placeholder="Enter tournament name"
-                                required
-                            >
+                            <input type="text" id="tournament-name" placeholder="Enter tournament name" required>
                         </div>
 
                         <div class="form-group full-width">
@@ -53,21 +49,12 @@
 
                             <div class="option-group">
                                 <label class="option-pill">
-                                    <input
-                                        type="radio"
-                                        name="tournament-mode"
-                                        value="TEAM"
-                                        checked
-                                    >
+                                    <input type="radio" name="tournament-mode" value="TEAM" checked>
                                     <span>Team Tournament</span>
                                 </label>
 
                                 <label class="option-pill">
-                                    <input
-                                        type="radio"
-                                        name="tournament-mode"
-                                        value="SINGLES"
-                                    >
+                                    <input type="radio" name="tournament-mode" value="SINGLES">
                                     <span>Individual Tournament</span>
                                 </label>
                             </div>
@@ -85,29 +72,15 @@
 
                         <div class="form-group">
                             <label for="boards-count">Boards per Match</label>
-                            <input
-                                type="number"
-                                id="boards-count"
-                                min="1"
-                                value="4"
-                                required
-                            >
+                            <input type="number" id="boards-count" min="1" value="4" required>
                         </div>
 
                         <div class="form-group">
                             <label for="total-rounds">Number of Rounds</label>
-                            <input
-                                type="number"
-                                id="total-rounds"
-                                min="1"
-                                value="5"
-                                required
-                            >
+                            <input type="number" id="total-rounds" min="1" value="5" required>
                         </div>
 
-                        <h3 class="section-title">Rules</h3>
-
-                        <div class="form-group full-width">
+                        <div class="form-group">
                             <label for="rules-preset">Rules Preset</label>
                             <select id="rules-preset">
                                 <option value="FIDE">FIDE Rules</option>
@@ -140,17 +113,13 @@
                                 Team Name
                             </label>
 
-                            <input
-                                type="text"
-                                id="participant-name"
-                                placeholder="Enter team name"
-                                autocomplete="off"
-                            >
+                            <div class="participant-input-row">
+                                <input type="text" id="participant-name" placeholder="Enter team name" autocomplete="off">
+                                <button type="submit" id="add-participant">
+                                    + Add Team
+                                </button>
+                            </div>
                         </div>
-
-                        <button type="submit" id="add-participant">
-                            + Add Team
-                        </button>
                     </form>
 
                     <div class="participant-list-section">
@@ -160,11 +129,7 @@
                     </div>
 
                     <div class="setup-navigation">
-                        <button
-                            type="button"
-                            id="back-to-settings"
-                            class="secondary-button"
-                        >
+                        <button type="button" id="back-to-settings" class="secondary-button">
                             ← Back
                         </button>
 
@@ -178,4 +143,5 @@
         </section>
     </main>
 </body>
+
 </html>
