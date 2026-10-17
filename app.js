@@ -42,18 +42,15 @@ function updateParticipantMode() {
     const isTeam = getTournamentMode() === "TEAM";
 
     participantLabel.textContent = isTeam ? "Team Name" : "Player Name";
-    participantName.placeholder = isTeam
-        ? "Enter team name"
+    participantName.placeholder = isTeam ? "Enter team name"
         : "Enter player name";
 
     addButton.textContent = isTeam ? "+ Add Team" : "+ Add Player";
 
-    description.textContent = isTeam
-        ? "Add the teams that will participate in your tournament."
+    description.textContent = isTeam ? "Add the teams that will participate in your tournament."
         : "Add the players that will participate in your tournament.";
 
-    participantListTitle.textContent = isTeam
-        ? `Teams (${participants.length})`
+    participantListTitle.textContent = isTeam ? `Teams (${participants.length})`
         : `Players (${participants.length})`;
 
     renderParticipants();
@@ -83,31 +80,27 @@ function renderParticipants() {
             renderParticipants();
         });
 
-        item.append(name, removeButton);
+        item.append(name, removeButton)
+            ;
         participantList.appendChild(item);
     });
 
-    participantListTitle.textContent = isTeam
-        ? `Teams (${participants.length})`
+    participantListTitle.textContent = isTeam ? `Teams (${participants.length})`
         : `Players (${participants.length})`;
 
     emptyMessage.hidden = participants.length > 0;
 }
 
-document
-    .getElementById("next-to-participants")
+document.getElementById("next-to-participants")
     .addEventListener("click", () => {
-        const tournamentName = document
-            .getElementById("tournament-name")
+        const tournamentName = document.getElementById("tournament-name")
             .value.trim();
 
         const boards = Number(
-            document.getElementById("boards-count").value
-        );
+            document.getElementById("boards-count").value);
 
         const rounds = Number(
-            document.getElementById("total-rounds").value
-        );
+            document.getElementById("total-rounds").value);
 
         if (!tournamentName) {
             alert("Please enter a tournament name.");
@@ -130,8 +123,7 @@ document
         showSetupStep(2);
     });
 
-document
-    .getElementById("back-to-settings")
+document.getElementById("back-to-settings")
     .addEventListener("click", () => showSetupStep(1));
 
 modeInputs.forEach((input) => {
@@ -166,8 +158,7 @@ participantForm.addEventListener("submit", (event) => {
     renderParticipants();
 });
 
-document
-    .getElementById("finish-setup")
+document.getElementById("finish-setup")
     .addEventListener("click", () => {
         if (participants.length === 0) {
             alert("Please add at least one participant or team.");
